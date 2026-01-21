@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fans Translations - Latest Web Novel Updates</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            font-weight: 300;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            font-size: 1.3em;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.2);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            color: #e74c3c;
+            font-size: 1.2em;
+        }
+
+        .novels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .novel-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .novel-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .novel-header {
+            display: flex;
+            padding: 20px;
+            gap: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .novel-cover {
+            width: 110px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        .novel-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .novel-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.95em;
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        .star {
+            font-size: 1.2em;
+        }
+
+        .chapters-list {
+            padding: 20px;
+        }
+
+        .chapters-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chapter-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s ease;
+        }
+
+        .chapter-item:hover {
+            background: #e9ecef;
+            border-left-color: #764ba2;
+            transform: translateX(5px);
+        }
+
+        .chapter-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .chapter-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .chapter-time {
+            font-size: 0.85em;
+            color: #95a5a6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-top: 40px;
+            color: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .novels-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .novel-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .novel-cover {
+                width: 150px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Fans Translations</h1>
+            <p class="subtitle">Your Gateway to the Latest Web Novel Chapters</p>
+        </header>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading latest chapters...</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Fans Translations. All rights reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Stay updated with the latest web novel chapters</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_URL = 'https://webnovelscraper.vercel.app/novel/fantranslation/latest';
+
+        async function fetchNovels() {
+            try {
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    displayNovels(data.data);
+                } else {
+                    throw new Error('Invalid data format');
+                }
+            } catch (error) {
+                console.error('Error fetching novels:', error);
+                displayError(error.message);
+            }
+        }
+
+        function displayNovels(novels) {
+            const contentDiv = document.getElementById('content');
+            
+            const html = `
+                <div class="novels-grid">
+                    ${novels.map(novel => createNovelCard(novel)).join('')}
+                </div>
+            `;
+            
+            contentDiv.innerHTML = html;
+        }
+
+        function createNovelCard(novel) {
+            return `
+                <div class="novel-card">
+                    <div class="novel-header">
+                        <img src="${novel.cover}" alt="${novel.title}" class="novel-cover" loading="lazy">
+                        <div class="novel-info">
+                            <h2 class="novel-title">${novel.title}</h2>
+                            <div class="rating">
+                                <span class="star">⭐</span>
+                                <span>${novel.rating}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chapters-list">
+                        <div class="chapters-title">Latest Chapters</div>
+                        ${novel.chapterList.map(chapter => `
+                            <div class="chapter-item">
+                                <div class="chapter-name">${chapter.latestChapter}</div>
+                                <div class="chapter-time">${chapter.uploadedTime}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayError(message) {
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = `
+                <div class="error">
+                    <h2>⚠️ Oops! Something went wrong</h2>
+                    <p style="margin-top: 15px;">${message}</p>
+                    <p style="margin-top: 10px;">Please try refreshing the page.</p>
+                </div>
+            `;
+        }
+
+        // Fetch novels when page loads
+        document.addEventListener('DOMContentLoaded', fetchNovels);
+    </script>
+</body>
+</html>
