@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fans Translations - Latest Web Novel Updates</title>
+    <title>TTSB Novels Hub - Latest Web Novel Updates</title>
     <style>
         * {
             margin: 0;
@@ -79,6 +79,21 @@
             font-size: 1.2em;
         }
 
+        .section-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+
         .novels-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -135,6 +150,16 @@
             overflow: hidden;
         }
 
+        .novel-title a {
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .novel-title a:hover {
+            color: #667eea;
+        }
+
         .rating {
             display: flex;
             align-items: center;
@@ -162,12 +187,15 @@
         }
 
         .chapter-item {
+            display: block;
             padding: 12px 15px;
             margin-bottom: 8px;
             background: #f8f9fa;
             border-radius: 8px;
             border-left: 4px solid #667eea;
             transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
         }
 
         .chapter-item:hover {
@@ -230,8 +258,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>📚 Fans Translations</h1>
-            <p class="subtitle">Your Gateway to the Latest Web Novel Chapters</p>
+            <h1>📚 TTSB Novels Hub</h1>
+            <p class="subtitle">Updated novels from various novel sites!</p>
         </header>
 
         <div id="content">
@@ -242,8 +270,8 @@
         </div>
 
         <footer>
-            <p>&copy; 2026 Fans Translations. All rights reserved.</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">Stay updated with the latest web novel chapters</p>
+            <p>&copy; 2026 TTSB Novels Hub. All rights reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Featuring novels from various novel sites!</p>
         </footer>
     </div>
 
@@ -275,8 +303,12 @@
             const contentDiv = document.getElementById('content');
             
             const html = `
-                <div class="novels-grid">
-                    ${novels.map(novel => createNovelCard(novel)).join('')}
+                <div class="section-header">
+                    <h2 class="section-title">Updates from Fan's Translations:</h2>
+    
+                    <div class="novels-grid">
+                        ${novels.map(novel => createNovelCard(novel)).join('')}
+                    </div>
                 </div>
             `;
             
@@ -284,12 +316,13 @@
         }
 
         function createNovelCard(novel) {
+            const novelUrl = `https://fanstranslations.com/${novel.id}`;
             return `
                 <div class="novel-card">
                     <div class="novel-header">
                         <img src="${novel.cover}" alt="${novel.title}" class="novel-cover" loading="lazy">
                         <div class="novel-info">
-                            <h2 class="novel-title">${novel.title}</h2>
+                            <h2 class="novel-title"><a href="${novelUrl}">${novel.title}</a></h2>
                             <div class="rating">
                                 <span class="star">⭐</span>
                                 <span>${novel.rating}</span>
@@ -298,12 +331,15 @@
                     </div>
                     <div class="chapters-list">
                         <div class="chapters-title">Latest Chapters</div>
-                        ${novel.chapterList.map(chapter => `
-                            <div class="chapter-item">
-                                <div class="chapter-name">${chapter.latestChapter}</div>
-                                <div class="chapter-time">${chapter.uploadedTime}</div>
-                            </div>
-                        `).join('')}
+                        ${novel.chapterList.map(chapter => {
+                            const chapterUrl = `https://fanstranslations.com/${chapter.chapterId}`;
+                            return `
+                                <a href="${chapterUrl}" class="chapter-item">
+                                    <div class="chapter-name">${chapter.latestChapter}</div>
+                                    <div class="chapter-time">${chapter.uploadedTime}</div>
+                                </a>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
