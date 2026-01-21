@@ -160,17 +160,20 @@
             color: #667eea;
         }
 
-        .rating {
+        .tags {
             display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.95em;
-            color: #f39c12;
-            font-weight: 600;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
         }
 
-        .star {
-            font-size: 1.2em;
+        .tag {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
         }
 
         .chapters-list {
@@ -217,6 +220,50 @@
         .chapter-time {
             font-size: 0.85em;
             color: #95a5a6;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination button {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #667eea;
+            color: white;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pagination button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination .page-info {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+            min-width: 100px;
+            text-align: center;
         }
 
         footer {
@@ -276,11 +323,22 @@
     </div>
 
     <script>
-        const API_URL = 'https://webnovelscraper.vercel.app/novel/fantranslation/latest';
+        const API_URL = 'https://webnovelscraper.vercel.app/novel/royalroad/latest';
+        let currentPage = 1;
+        let totalPages = 1;
 
-        async function fetchNovels() {
+        async function fetchNovels(page = 1) {
             try {
-                const response = await fetch(API_URL);
+                // Show loading state
+                const contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading latest chapters...</p>
+                    </div>
+                `;
+
+                const response = await fetch(`${API_URL}?page=${page}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -289,7 +347,13 @@
                 const data = await response.json();
                 
                 if (data.success && data.data) {
+                    // Ensure currentPage is set as a number before displaying
+                    currentPage = Number(data.page) || Number(page) || 1;
+                    // Assuming there are multiple pages, adjust based on API response if it provides total
                     displayNovels(data.data);
+                    
+                    // Scroll to top when page changes
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     throw new Error('Invalid data format');
                 }
@@ -304,42 +368,50 @@
             
             const html = `
                 <div class="section-header">
-                    <h2 class="section-title">Updates from Fan's Translations:</h2>
-    
-                    <div class="novels-grid">
-                        ${novels.map(novel => createNovelCard(novel)).join('')}
-                    </div>
+                    <h2 class="section-title">Updates from Royal Road</h2>
+                </div>
+                <div class="novels-grid">
+                    ${novels.map(novel => createNovelCard(novel)).join('')}
+                </div>
+                <div class="pagination">
+                    <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        ← Previous
+                    </button>
+                    <span class="page-info">Page ${currentPage}</span>
+                    <button onclick="goToPage(${currentPage + 1})" ${novels.length < 20 ? 'disabled' : ''}>
+                        Next →
+                    </button>
                 </div>
             `;
             
             contentDiv.innerHTML = html;
         }
 
+        function goToPage(page) {
+            if (page < 1) return;
+            fetchNovels(page);
+        }
+
         function createNovelCard(novel) {
-            const novelUrl = `https://fanstranslations.com/${novel.id}`;
             return `
                 <div class="novel-card">
                     <div class="novel-header">
                         <img src="${novel.cover}" alt="${novel.title}" class="novel-cover" loading="lazy">
                         <div class="novel-info">
-                            <h2 class="novel-title"><a href="${novelUrl}">${novel.title}</a></h2>
-                            <div class="rating">
-                                <span class="star">⭐</span>
-                                <span>${novel.rating}</span>
+                            <h2 class="novel-title"><a href="${novel.url}">${novel.title}</a></h2>
+                            <div class="tags">
+                                ${novel.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
                             </div>
                         </div>
                     </div>
                     <div class="chapters-list">
                         <div class="chapters-title">Latest Chapters</div>
-                        ${novel.chapterList.map(chapter => {
-                            const chapterUrl = `https://fanstranslations.com/${chapter.chapterId}`;
-                            return `
-                                <a href="${chapterUrl}" class="chapter-item">
-                                    <div class="chapter-name">${chapter.latestChapter}</div>
-                                    <div class="chapter-time">${chapter.uploadedTime}</div>
-                                </a>
-                            `;
-                        }).join('')}
+                        ${novel.latestChapters.map(chapter => `
+                            <a href="${chapter.url}" class="chapter-item">
+                                <div class="chapter-name">${chapter.title}</div>
+                                <div class="chapter-time">${chapter.timeAgo}</div>
+                            </a>
+                        `).join('')}
                     </div>
                 </div>
             `;
