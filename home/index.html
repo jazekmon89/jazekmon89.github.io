@@ -392,24 +392,32 @@
             fetchNovels(page);
         }
 
+        // Novel and chapter titles are written by Royal Road authors, so escape everything
+        // from the API before putting it into HTML
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[ch]);
+        }
+
         function createNovelCard(novel) {
             return `
                 <div class="novel-card">
                     <div class="novel-header">
-                        <img src="${novel.cover}" alt="${novel.title}" class="novel-cover" loading="lazy">
+                        <img src="${escapeHtml(novel.cover)}" alt="${escapeHtml(novel.title)}" class="novel-cover" loading="lazy">
                         <div class="novel-info">
-                            <h2 class="novel-title"><a href="${novel.url}">${novel.title}</a></h2>
+                            <h2 class="novel-title"><a href="${escapeHtml(novel.url)}">${escapeHtml(novel.title)}</a></h2>
                             <div class="tags">
-                                ${novel.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                ${(novel.tags || []).slice(0, 3).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
                             </div>
                         </div>
                     </div>
                     <div class="chapters-list">
                         <div class="chapters-title">Latest Chapters</div>
-                        ${novel.latestChapters.map(chapter => `
-                            <a href="${chapter.url}" class="chapter-item">
-                                <div class="chapter-name">${chapter.title}</div>
-                                <div class="chapter-time">${chapter.timeAgo}</div>
+                        ${(novel.latestChapters || []).map(chapter => `
+                            <a href="${escapeHtml(chapter.url)}" class="chapter-item">
+                                <div class="chapter-name">${escapeHtml(chapter.title)}</div>
+                                <div class="chapter-time">${escapeHtml(chapter.timeAgo)}</div>
                             </a>
                         `).join('')}
                     </div>
@@ -422,14 +430,15 @@
             contentDiv.innerHTML = `
                 <div class="error">
                     <h2>⚠️ Oops! Something went wrong</h2>
-                    <p style="margin-top: 15px;">${message}</p>
+                    <p style="margin-top: 15px;">${escapeHtml(message)}</p>
                     <p style="margin-top: 10px;">Please try refreshing the page.</p>
                 </div>
             `;
         }
 
         // Fetch novels when page loads
-        document.addEventListener('DOMContentLoaded', fetchNovels);
+        // (wrapped so the event object isn't passed as the page number)
+        document.addEventListener('DOMContentLoaded', () => fetchNovels(1));
     </script>
 </body>
 </html>
